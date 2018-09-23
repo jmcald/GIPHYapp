@@ -1,1 +1,121 @@
-!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>It's Always Sunny in GIPHY</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+</head>
+
+<body>
+
+    <div class="row">
+
+        <div class="col-sm-12" id="buttons">
+
+        </div>
+    </div>
+
+</div>
+
+<!--I created a form to allow user inout to be added to the topics array-->
+<form role="form">
+
+    <input type="test" class="form-control" id="input">
+
+    <button type="submit" id ="submit" class="btn btn-default">Submit</button>
+
+</form>
+
+<div id="gifs">
+    
+</div>
+
+<script type="text/javascript">
+    $("#buttons").on("click", ".button", function() {
+      var person = $(this).attr("data-person");
+      var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+        person + "&api_key=UL7VIKqFJ6X2hGUrTwZutt4A4v0mqyhH&limit=10";
+
+      $.ajax({
+        url: queryURL,
+        method: "GET"
+      })
+
+        .then(function(response) {
+          var results = response.data;
+          console.log(results)
+
+          for (var i = 0; i < results.length; i++) {
+            var gifDiv = $("<div>");
+
+            var rating = results[i].rating;
+
+            var p = $("<p>").text("Rating: " + rating);
+
+            var personImage = $("<img>");
+            personImage.attr("src", results[i].images.fixed_height_still.url);
+            personImage.attr("data-still", results[i].images.fixed_height_still.url);
+            personImage.attr("data-animate", results[i].images.fixed_height.url);
+            personImage.attr("data-state", false)
+            personImage.addClass("gif")
+            
+
+            gifDiv.prepend(p);
+            gifDiv.prepend(personImage);
+
+            $("#gifs").prepend(gifDiv);
+          }
+        });
+    });
+
+    $("#gifs").on("click", ".gif", function() {
+
+        var state = $(this).attr("data-state");
+
+        if (state === "false"){
+        $(this).attr("src", $(this).attr("data-animate"));
+        $(this).attr("data-state", "true");
+        }
+
+        else {
+        $(this).attr("src", $(this).attr("data-still"));
+        $(this).attr("data-state", "false");
+        }
+    });
+
+    var topics = ["Charlie Day", "Rob Mcelhenney", "Danny Devito", "Kaitlin Olson", "Glenn Howerton"];
+
+    // I tried to create an on click function to add the user submission to the topics array when the submit button was pushed, but I couldn't figure out how to attach to input to a variable properly
+    $("#submit").on("click", function() {
+
+        var userInput = $("#input").toString()
+        console.log(input)
+
+    })
+
+
+    function displayButtons() {
+        for (i=0; i<topics.length; i++) {
+
+            var newBtn = $("<button>")
+
+            newBtn.attr("data-person", topics[i])
+            newBtn.addClass("button")
+            
+            newBtn.text(topics[i])
+
+            $("#buttons").append(newBtn);
+        }
+    }
+
+    displayButtons();
+</script>
+    
+</body>
+</html>
